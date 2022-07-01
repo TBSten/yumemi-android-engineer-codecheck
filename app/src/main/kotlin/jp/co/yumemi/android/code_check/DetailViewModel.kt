@@ -11,11 +11,12 @@ import io.ktor.client.call.*
 import io.ktor.client.engine.android.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import jp.co.yumemi.android.code_check.TopActivity.Companion.lastSearchDate
+import jp.co.yumemi.android.code_check.MainActivity.Companion.lastSearchDate
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import kotlinx.parcelize.Parcelize
+import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
 
@@ -23,49 +24,34 @@ import java.util.*
  * DetailFragment で使う
  */
 class DetailViewModel(
-    val context: Context
+    private val context: Context
 ) : ViewModel() {
 
-    // 検索結果
+    private val client = HttpClient(Android)        //クライアントを使い回すためにフィールドへ移動
+
+    /**
+     * Githubからレポジトリを検索する
+     *
+     * lastSearchDateが更新される
+     */
     fun searchResults(inputText: String): List<item> = runBlocking {
-        val client = HttpClient(Android)
 
         return@runBlocking GlobalScope.async {
-            val response: HttpResponse = client?.get("https://api.github.com/search/repositories") {
-                header("Accept", "application/vnd.github.v3+json")
-                parameter("q", inputText)
+            if (client == null) {
+                throw IllegalArgumentException("invalid client")
             }
+            val response = requestSearchToGithub(inputText)
 
-            val jsonBody = JSONObject(response.receive<String>())
+            val jsonItems = JSONObject(response.receive<String>())
+                .optJSONArray("items") ?: throw IllegalArgumentException("invalid client")
 
-            val jsonItems = jsonBody.optJSONArray("items")!!
-
-            val items = mutableListOf<item>()
-
-            /**
-             * アイテムの個数分ループする
-             */
-            for (i in 0 until jsonItems.length()) {
-                val jsonItem = jsonItems.optJSONObject(i)!!
-                val name = jsonItem.optString("full_name")
-                val ownerIconUrl = jsonItem.optJSONObject("owner")!!.optString("avatar_url")
-                val language = jsonItem.optString("language")
-                val stargazersCount = jsonItem.optLong("stargazers_count")
-                val watchersCount = jsonItem.optLong("watchers_count")
-                val forksCount = jsonItem.optLong("forks_conut")
-                val openIssuesCount = jsonItem.optLong("open_issues_count")
-
-                items.add(
-                    item(
-                        name = name,
-                        ownerIconUrl = ownerIconUrl,
-                        language = context.getString(R.string.written_language, language),
-                        stargazersCount = stargazersCount,
-                        watchersCount = watchersCount,
-                        forksCount = forksCount,
-                        openIssuesCount = openIssuesCount
-                    )
-                )
+            // 検索結果が格納されるlist
+            val items = mutableListOf<item>().also {
+                for (i in 0 until jsonItems.length()) {
+                    val jsonItem = jsonItems.optJSONObject((i)) ?: break
+                    val item = item.jsonToItem(jsonItem, context)
+                    it.add(item)
+                }
             }
 
             lastSearchDate = Date()
@@ -74,6 +60,18 @@ class DetailViewModel(
         }.await()
     }
 
+    /**
+     * Githubへ検索のためのHttpリクエストを送る
+     */
+    private fun requestSearchToGithub(inputText: String): HttpResponse = runBlocking {
+        return@runBlocking GlobalScope.async {
+            val response: HttpResponse = client.get("https://api.github.com/search/repositories") {
+                header("Accept", "application/vnd.github.v3+json")
+                parameter("q", inputText)
+            }
+            return@async response
+        }.await()
+    }
 }
 
 @Parcelize
@@ -85,4 +83,30 @@ data class item(
     val watchersCount: Long,
     val forksCount: Long,
     val openIssuesCount: Long,
-) : Parcelable
+) : Parcelable {
+    companion object {
+
+        fun jsonToItem(jsonItem: JSONObject, context: Context): item {
+            return jsonItem.let {
+                val name = it.optString("full_name")
+                val ownerIconUrl = it.optJSONObject("owner")!!.optString("avatar_url")
+                val language = it.optString("language")
+                val stargazersCount = it.optLong("stargazers_count")
+                val watchersCount = it.optLong("watchers_count")
+                val forksCount = it.optLong("forks_conut")
+                val openIssuesCount = it.optLong("open_issues_count")
+                item(
+                    name = name,
+                    ownerIconUrl = ownerIconUrl,
+                    language = context.getString(R.string.written_language, language),
+                    stargazersCount = stargazersCount,
+                    watchersCount = watchersCount,
+                    forksCount = forksCount,
+                    openIssuesCount = openIssuesCount
+                )
+            }
+        }
+
+    }
+}
+

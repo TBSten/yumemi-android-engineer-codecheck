@@ -11,34 +11,37 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.*
-import jp.co.yumemi.android.code_check.databinding.FragmentListBinding
+import jp.co.yumemi.android.code_check.databinding.FragmentSearchBinding
 
-class ListFragment : Fragment(R.layout.fragment_list) {
+/**
+ * レポジトリ検索ページ
+ */
+class SearchFragment : Fragment(R.layout.fragment_search) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val _binding = FragmentListBinding.bind(view)
-
+        val _binding = FragmentSearchBinding.bind(view)
         val _viewModel = DetailViewModel(requireContext())
-
         val _layoutManager = LinearLayoutManager(requireContext())
         val _dividerItemDecoration =
             DividerItemDecoration(requireContext(), _layoutManager.orientation)
-        val _adapter = CustomAdapter(object : CustomAdapter.OnItemClickListener {
+
+        // 検索結果の各行クリック時の動作
+        val _adapter = ItemClickAdapter(object : ItemClickAdapter.OnItemClickListener {
             override fun itemClick(item: item) {
-                gotoRepositoryFragment(item)
+                gotoDetailFragment(item)
             }
         })
 
         _binding.searchInputText
             .setOnEditorActionListener { editText, action, _ ->
-                //エンターキーが押された時以外は `return@setOnEditorActionListener false`
-                editText.text.toString().let {
-                    _viewModel.searchResults(it).apply {
-                        _adapter.submitList(this)
-                    }
-                }
+                //TODO: エンターキーが押された時以外は `return@setOnEditorActionListener false`
+                //入力された文字列をもとにGithubから検索する
+                val inputText = editText.text.toString()
+                val searchedResult = _viewModel.searchResults(inputText)
+                //検索結果をもとに画面を更新する
+                _adapter.submitList(searchedResult)
                 return@setOnEditorActionListener true
             }
 
@@ -48,9 +51,10 @@ class ListFragment : Fragment(R.layout.fragment_list) {
             it.adapter = _adapter
         }
     }
-    fun gotoRepositoryFragment(item: item) {
-        val _action = ListFragmentDirections
-            .actionRepositoriesFragmentToRepositoryFragment(item = item)
+
+    fun gotoDetailFragment(item: item) {
+        val _action = SearchFragmentDirections
+            .actionListFragmentToDetailFragment(item = item)
         findNavController().navigate(_action)
     }
 }
@@ -67,9 +71,9 @@ val diff_util = object : DiffUtil.ItemCallback<item>() {
 
 }
 
-class CustomAdapter(
+class ItemClickAdapter(
     private val itemClickListener: OnItemClickListener,
-) : ListAdapter<item, CustomAdapter.ViewHolder>(diff_util) {
+) : ListAdapter<item, ItemClickAdapter.ViewHolder>(diff_util) {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
