@@ -20,9 +20,9 @@ import org.json.JSONObject
 import java.util.*
 
 /**
- * TwoFragment で使う
+ * DetailFragment で使う
  */
-class OneViewModel(
+class DetailViewModel(
     val context: Context
 ) : ViewModel() {
 
@@ -73,6 +73,7 @@ class OneViewModel(
             return@async items.toList()
         }.await()
     }
+
 }
 
 @Parcelize
