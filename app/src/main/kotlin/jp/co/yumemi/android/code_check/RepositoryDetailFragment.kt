@@ -12,12 +12,11 @@ import coil.load
 import jp.co.yumemi.android.code_check.MainActivity.Companion.lastSearchDate
 import jp.co.yumemi.android.code_check.databinding.FragmentRepositoryDetailBinding
 
-class RepositoryDetailFragment : Fragment(R.layout.fragment_repository_detail) {
+class RepositoryDetailFragment : DialogFragment(R.layout.fragment_repository_detail) {
 
     private val args: RepositoryDetailFragmentArgs by navArgs()
 
     private lateinit var binding: FragmentRepositoryDetailBinding
-    private val _binding get() = binding!!
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -28,12 +27,14 @@ class RepositoryDetailFragment : Fragment(R.layout.fragment_repository_detail) {
 
         var item = args.item
 
-        _binding.ownerIconView.load(item.ownerIconUrl);
-        _binding.nameView.text = item.name;
-        _binding.languageView.text = item.language;
-        _binding.starsView.text = "${item.stargazersCount} stars";
-        _binding.watchersView.text = "${item.watchersCount} watchers";
-        _binding.forksView.text = "${item.forksCount} forks";
-        _binding.openIssuesView.text = "${item.openIssuesCount} open issues";
+        withCatch("画像が読み込めませんでした"){
+            binding.ownerIconView.load(item.ownerIconUrl)
+        }
+        binding.nameView.text = item.name;
+        binding.languageView.text = item.language;
+        binding.starsView.text = "${item.stargazersCount} stars";
+        binding.watchersView.text = "${item.watchersCount} watchers";
+        binding.forksView.text = "${item.forksCount} forks";
+        binding.openIssuesView.text = "${item.openIssuesCount} open issues";
     }
 }

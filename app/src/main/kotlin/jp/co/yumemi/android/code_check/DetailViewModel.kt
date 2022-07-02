@@ -72,6 +72,7 @@ class DetailViewModel(
             return@async response
         }.await()
     }
+
 }
 
 @Parcelize
@@ -89,7 +90,10 @@ data class item(
         fun jsonToItem(jsonItem: JSONObject, context: Context): item {
             return jsonItem.let {
                 val name = it.optString("full_name")
-                val ownerIconUrl = it.optJSONObject("owner")!!.optString("avatar_url")
+                val ownerIconUrl = it.optJSONObject("owner").let { obj->
+                    obj ?: throw IllegalArgumentException("invalid jsonItem.owner")
+                    obj.optString("avatar_url")
+                }
                 val language = it.optString("language")
                 val stargazersCount = it.optLong("stargazers_count")
                 val watchersCount = it.optLong("watchers_count")

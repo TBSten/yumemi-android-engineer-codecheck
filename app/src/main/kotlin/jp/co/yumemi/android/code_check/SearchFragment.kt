@@ -4,9 +4,11 @@
 package jp.co.yumemi.android.code_check
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -16,7 +18,7 @@ import jp.co.yumemi.android.code_check.databinding.FragmentSearchBinding
 /**
  * レポジトリ検索ページ
  */
-class SearchFragment : Fragment(R.layout.fragment_search) {
+class SearchFragment : DialogFragment(R.layout.fragment_search) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -37,11 +39,16 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         _binding.searchInputText
             .setOnEditorActionListener { editText, action, _ ->
                 //TODO: エンターキーが押された時以外は `return@setOnEditorActionListener false`
-                //入力された文字列をもとにGithubから検索する
-                val inputText = editText.text.toString()
-                val searchedResult = _viewModel.searchResults(inputText)
-                //検索結果をもとに画面を更新する
-                _adapter.submitList(searchedResult)
+                if(action != EditorInfo.IME_ACTION_SEARCH){
+                    return@setOnEditorActionListener false
+                }
+                withCatch ("検索中にエラーが発生しました"){
+                    //入力された文字列をもとにGithubから検索する
+                    val inputText = editText.text.toString()
+                    val searchedResult = _viewModel.searchResults(inputText)
+                    //検索結果をもとに画面を更新する
+                    _adapter.submitList(searchedResult)
+                }
                 return@setOnEditorActionListener true
             }
 
@@ -89,8 +96,13 @@ class ItemClickAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val _item = getItem(position)
-        (holder.itemView.findViewById<View>(R.id.repositoryNameView) as TextView).text =
-            _item.name
+
+        //repositoryNameView
+        val textView = holder.itemView.findViewById<View>(R.id.repositoryNameView)
+        if (textView !is TextView) {
+            throw UnsupportedOperationException("invalid textView type")
+        }
+        textView.text = _item.name
 
         holder.itemView.setOnClickListener {
             itemClickListener.itemClick(_item)
