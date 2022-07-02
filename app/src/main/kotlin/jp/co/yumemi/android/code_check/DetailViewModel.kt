@@ -16,7 +16,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import kotlinx.parcelize.Parcelize
-import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
 
@@ -35,7 +34,6 @@ class DetailViewModel(
      * lastSearchDateが更新される
      */
     fun searchResults(inputText: String): List<item> = runBlocking {
-
         return@runBlocking GlobalScope.async {
             if (client == null) {
                 throw IllegalArgumentException("invalid client")
@@ -49,7 +47,7 @@ class DetailViewModel(
             val items = mutableListOf<item>().also {
                 for (i in 0 until jsonItems.length()) {
                     val jsonItem = jsonItems.optJSONObject((i)) ?: break
-                    val item = item.jsonToItem(jsonItem, context)
+                    val item = jsonToItem(jsonItem, context)
                     it.add(item)
                 }
             }
@@ -85,32 +83,28 @@ data class item(
     val forksCount: Long,
     val openIssuesCount: Long,
 ) : Parcelable {
-    companion object {
-
-        fun jsonToItem(jsonItem: JSONObject, context: Context): item {
-            return jsonItem.let {
-                val name = it.optString("full_name")
-                val ownerIconUrl = it.optJSONObject("owner").let { obj->
-                    obj ?: throw IllegalArgumentException("invalid jsonItem.owner")
-                    obj.optString("avatar_url")
-                }
-                val language = it.optString("language")
-                val stargazersCount = it.optLong("stargazers_count")
-                val watchersCount = it.optLong("watchers_count")
-                val forksCount = it.optLong("forks_conut")
-                val openIssuesCount = it.optLong("open_issues_count")
-                item(
-                    name = name,
-                    ownerIconUrl = ownerIconUrl,
-                    language = context.getString(R.string.written_language, language),
-                    stargazersCount = stargazersCount,
-                    watchersCount = watchersCount,
-                    forksCount = forksCount,
-                    openIssuesCount = openIssuesCount
-                )
-            }
-        }
-
-    }
 }
 
+fun jsonToItem(jsonItem: JSONObject, context: Context): item {
+    return jsonItem.let {
+        val name = it.optString("full_name")
+        val ownerIconUrl = it.optJSONObject("owner").let { obj ->
+            obj ?: throw IllegalArgumentException("invalid jsonItem.owner")
+            obj.optString("avatar_url")
+        }
+        val language = it.optString("language")
+        val stargazersCount = it.optLong("stargazers_count")
+        val watchersCount = it.optLong("watchers_count")
+        val forksCount = it.optLong("forks_conut")
+        val openIssuesCount = it.optLong("open_issues_count")
+        item(
+            name = name,
+            ownerIconUrl = ownerIconUrl,
+            language = context.getString(R.string.written_language, language),
+            stargazersCount = stargazersCount,
+            watchersCount = watchersCount,
+            forksCount = forksCount,
+            openIssuesCount = openIssuesCount
+        )
+    }
+}

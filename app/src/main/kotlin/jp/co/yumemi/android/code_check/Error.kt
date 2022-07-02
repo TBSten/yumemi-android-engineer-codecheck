@@ -2,36 +2,32 @@ package jp.co.yumemi.android.code_check
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.util.Log
-import androidx.annotation.LayoutRes
-import androidx.fragment.app.Fragment
-import kotlin.Exception
 
 /**
  * バリデーションに失敗するなどユーザに起因する例外
  */
 class InputError(
-    msg:String = "search error",
-):Exception()
+    msg: String = "search error",
+) : Exception()
 
 /**
  * レイアウトファイルで特定のidのviewがみつかないなど、プログラマに起因する例外
  */
 class ResourceException(
-    msg:String = "search error",
-):Exception()
+    msg: String = "search error",
+) : Exception()
 
 
 /**
  * エラーをキャッチして特定の処理を実行する
  */
-inline fun <R> catched(context:Context?,func: () -> R):R? {
+inline fun <R> catched(context: Context?, func: () -> R): R? {
     try {
         return func()
     } catch (e: Throwable) {
         Log.e("", "Error occurred", e)
-        if(context != null){
+        if (context != null) {
             //TODO: アラートなどの表示
             AlertDialog.Builder(context)
                 .setTitle("エラーが発生しました")

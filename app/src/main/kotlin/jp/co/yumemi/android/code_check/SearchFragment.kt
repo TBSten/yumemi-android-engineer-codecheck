@@ -4,13 +4,11 @@
 package jp.co.yumemi.android.code_check
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.*
 import jp.co.yumemi.android.code_check.databinding.FragmentSearchBinding
@@ -39,10 +37,10 @@ class SearchFragment : DialogFragment(R.layout.fragment_search) {
         _binding.searchInputText
             .setOnEditorActionListener { editText, action, _ ->
                 //TODO: エンターキーが押された時以外は `return@setOnEditorActionListener false`
-                if(action != EditorInfo.IME_ACTION_SEARCH){
+                if (action != EditorInfo.IME_ACTION_SEARCH) {
                     return@setOnEditorActionListener false
                 }
-                withCatch ("検索中にエラーが発生しました"){
+                withCatch("検索中にエラーが発生しました") {
                     //入力された文字列をもとにGithubから検索する
                     val inputText = editText.text.toString()
                     val searchedResult = _viewModel.searchResults(inputText)

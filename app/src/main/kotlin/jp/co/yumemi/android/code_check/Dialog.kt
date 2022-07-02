@@ -5,7 +5,6 @@ import android.content.DialogInterface
 import android.util.Log
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
-import java.lang.Exception
 
 open class DialogFragment(@LayoutRes contentLayoutId: Int) : Fragment(contentLayoutId) {
     /**
@@ -37,7 +36,7 @@ open class DialogFragment(@LayoutRes contentLayoutId: Int) : Fragment(contentLay
     fun <ResultType> withCatch(
         func: () -> ResultType,
     ): ResultType? {
-        return withCatch("error occured",func)
+        return withCatch("error occured", func)
     }
 
     fun <ResultType> withCatch(
