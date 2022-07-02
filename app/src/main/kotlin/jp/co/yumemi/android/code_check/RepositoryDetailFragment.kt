@@ -20,10 +20,11 @@ class RepositoryDetailFragment : DialogFragment(R.layout.fragment_repository_det
 
         Log.d("検索した日時", lastSearchDate.toString())
 
-        var binding: FragmentRepositoryDetailBinding = FragmentRepositoryDetailBinding.bind(view)
-
+        // viewにitemを適用
         var item = args.item
-
+        setViewByItem(view,item)
+    }
+    fun setViewByItem(view: View,item: item){
         FragmentRepositoryDetailBinding.bind(view).run {
             withCatch("画像が読み込めませんでした") {
                 ownerIconView.load(item.ownerIconUrl)
@@ -35,5 +36,6 @@ class RepositoryDetailFragment : DialogFragment(R.layout.fragment_repository_det
             forksView.text = "${item.forksCount} forks";
             openIssuesView.text = "${item.openIssuesCount} open issues";
         }
+
     }
 }

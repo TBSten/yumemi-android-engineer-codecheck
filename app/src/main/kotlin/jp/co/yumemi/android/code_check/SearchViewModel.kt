@@ -5,6 +5,7 @@ package jp.co.yumemi.android.code_check
 
 import android.content.Context
 import android.os.Parcelable
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -17,12 +18,13 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import kotlinx.parcelize.Parcelize
 import org.json.JSONObject
+import java.lang.System.identityHashCode
 import java.util.*
 
 /**
- * DetailFragment で使う
+ * SearchFragment で使う
  */
-class DetailViewModel(
+class SearchViewModel(
     private val context: Context
 ) : ViewModel() {
 
@@ -34,16 +36,19 @@ class DetailViewModel(
      * lastSearchDateが更新される
      */
     fun searchResults(inputText: String): List<item> = runBlocking {
+        Log.d("","search ${identityHashCode(client)}")
         return@runBlocking GlobalScope.async {
             if (client == null) {
                 throw IllegalArgumentException("invalid client")
             }
+            // web api へリクエストを送る
             val response = requestSearchToGithub(inputText)
 
+            //response.body.itemsを取得
             val jsonItems = JSONObject(response.receive<String>())
                 .optJSONArray("items") ?: throw IllegalArgumentException("invalid client")
 
-            // 検索結果が格納されるlist
+            // 検索結果を返す
             val items = mutableListOf<item>().also {
                 for (i in 0 until jsonItems.length()) {
                     val jsonItem = jsonItems.optJSONObject((i)) ?: break
@@ -51,9 +56,8 @@ class DetailViewModel(
                     it.add(item)
                 }
             }
-
+            //最終更新日を更新する
             lastSearchDate = Date()
-
             return@async items.toList()
         }.await()
     }

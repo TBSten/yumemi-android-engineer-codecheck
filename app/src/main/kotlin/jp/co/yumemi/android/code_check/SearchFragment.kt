@@ -22,10 +22,7 @@ class SearchFragment : DialogFragment(R.layout.fragment_search) {
         super.onViewCreated(view, savedInstanceState)
 
         val _binding = FragmentSearchBinding.bind(view)
-        val _viewModel = DetailViewModel(requireContext())
-        val _layoutManager = LinearLayoutManager(requireContext())
-        val _dividerItemDecoration =
-            DividerItemDecoration(requireContext(), _layoutManager.orientation)
+        val _viewModel = SearchViewModel(requireContext())
 
         // 検索結果の各行クリック時の動作
         val _adapter = ItemClickAdapter(object : ItemClickAdapter.OnItemClickListener {
@@ -51,6 +48,9 @@ class SearchFragment : DialogFragment(R.layout.fragment_search) {
             }
 
         _binding.recyclerView.also {
+            val _layoutManager = LinearLayoutManager(requireContext())
+            val _dividerItemDecoration =
+                DividerItemDecoration(requireContext(), _layoutManager.orientation)
             it.layoutManager = _layoutManager
             it.addItemDecoration(_dividerItemDecoration)
             it.adapter = _adapter
