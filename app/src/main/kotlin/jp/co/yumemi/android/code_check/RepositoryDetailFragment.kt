@@ -3,9 +3,11 @@
  */
 package jp.co.yumemi.android.code_check
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import coil.load
 import jp.co.yumemi.android.code_check.MainActivity.Companion.lastSearchDate
@@ -20,10 +22,10 @@ class RepositoryDetailFragment : DialogFragment(R.layout.fragment_repository_det
 
         Log.d("検索した日時", lastSearchDate.toString())
 
-        var binding: FragmentRepositoryDetailBinding = FragmentRepositoryDetailBinding.bind(view)
+        setViewByItem(view,args.item)
+    }
 
-        var item = args.item
-
+    fun setViewByItem(view:View,item:item){
         FragmentRepositoryDetailBinding.bind(view).run {
             withCatch("画像が読み込めませんでした") {
                 ownerIconView.load(item.ownerIconUrl)
@@ -36,4 +38,5 @@ class RepositoryDetailFragment : DialogFragment(R.layout.fragment_repository_det
             openIssuesView.text = "${item.openIssuesCount} open issues";
         }
     }
+
 }
