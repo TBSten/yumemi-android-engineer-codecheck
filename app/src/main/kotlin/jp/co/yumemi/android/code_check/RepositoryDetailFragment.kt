@@ -3,7 +3,6 @@
  */
 package jp.co.yumemi.android.code_check
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -12,8 +11,10 @@ import androidx.navigation.fragment.navArgs
 import coil.load
 import jp.co.yumemi.android.code_check.MainActivity.Companion.lastSearchDate
 import jp.co.yumemi.android.code_check.databinding.FragmentRepositoryDetailBinding
+import jp.co.yumemi.android.code_check.util.withCatch
+import jp.co.yumemi.android.code_check.model.RepositoryItem
 
-class RepositoryDetailFragment : DialogFragment(R.layout.fragment_repository_detail) {
+class RepositoryDetailFragment : Fragment(R.layout.fragment_repository_detail) {
 
     private val args: RepositoryDetailFragmentArgs by navArgs()
 
@@ -22,16 +23,17 @@ class RepositoryDetailFragment : DialogFragment(R.layout.fragment_repository_det
 
         Log.d("検索した日時", lastSearchDate.toString())
 
-        setViewByItem(view,args.item)
+        setViewByItem(view, args.item)
     }
 
-    fun setViewByItem(view:View,item:item){
-        FragmentRepositoryDetailBinding.bind(view).run {
-            withCatch("画像が読み込めませんでした") {
+    private fun setViewByItem(view: View, item: RepositoryItem) {
+        val binding = FragmentRepositoryDetailBinding.bind(view)
+        binding.run {
+            withCatch(this@RepositoryDetailFragment.getString(R.string.img_failure)) {
                 ownerIconView.load(item.ownerIconUrl)
             }
             nameView.text = item.name;
-            languageView.text = item.language;
+            languageView.text = getString(R.string.written_language, item.language);
             starsView.text = "${item.stargazersCount} stars";
             watchersView.text = "${item.watchersCount} watchers";
             forksView.text = "${item.forksCount} forks";
@@ -40,3 +42,4 @@ class RepositoryDetailFragment : DialogFragment(R.layout.fragment_repository_det
     }
 
 }
+
