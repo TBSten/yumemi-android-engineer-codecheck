@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.*
 import jp.co.yumemi.android.code_check.databinding.FragmentSearchBinding
 import jp.co.yumemi.android.code_check.util.withCatch
 import jp.co.yumemi.android.code_check.model.RepositoryItem
+import jp.co.yumemi.android.code_check.viewmodel.DetailViewModel
 
 /**
  * レポジトリ検索ページ
