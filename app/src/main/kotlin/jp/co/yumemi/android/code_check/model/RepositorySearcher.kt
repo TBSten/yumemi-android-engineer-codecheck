@@ -1,4 +1,4 @@
-package jp.co.yumemi.android.code_check.viewmodel
+package jp.co.yumemi.android.code_check.model
 
 import io.ktor.client.*
 import io.ktor.client.call.*
