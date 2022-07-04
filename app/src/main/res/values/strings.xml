@@ -1,7 +1,11 @@
+<!-- 定数はjp.co.yumemi.android.code_check.util.Constantsに移動しました -->
+
 <resources>
     <string name="app_name">Android Engineer CodeCheck</string>
     <string name="searchInputText_hint">GitHub のリポジトリを検索できるよー</string>
     <string name="written_language">Written in %s</string>
     <string name="error_alert_title">エラーが発生しました</string>
     <string name="error_alert_message">しばらく経ってからやり直してください。それでも引き続きエラーが発生する場合は開発者に相談してください。</string>
+    <string name="img_failure">画像が読み込めませんでした</string>
+    <string name="search_failure">検索中にエラーが発生しました</string>
 </resources>

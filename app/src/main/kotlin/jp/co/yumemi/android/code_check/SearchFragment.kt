@@ -5,91 +5,115 @@ package jp.co.yumemi.android.code_check
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.*
 import jp.co.yumemi.android.code_check.databinding.FragmentSearchBinding
+import jp.co.yumemi.android.code_check.util.withCatch
+import jp.co.yumemi.android.code_check.viewmodel.RepositoryItem
 
 /**
  * レポジトリ検索ページ
  */
-class SearchFragment : DialogFragment(R.layout.fragment_search) {
+class SearchFragment : Fragment(R.layout.fragment_search) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val _binding = FragmentSearchBinding.bind(view)
-        val _viewModel = DetailViewModel(requireContext())
-        val _layoutManager = LinearLayoutManager(requireContext())
-        val _dividerItemDecoration =
-            DividerItemDecoration(requireContext(), _layoutManager.orientation)
+        val _viewModel = DetailViewModel()
 
-        // 検索結果の各行クリック時の動作
-        val _adapter = ItemClickAdapter(object : ItemClickAdapter.OnItemClickListener {
-            override fun itemClick(item: item) {
-                gotoDetailFragment(item)
-            }
-        })
+        // 検索結果の情報の表示と各行クリック時の動作
+        val repositoryItemAdapter =
+            RepositoryItemAdapter(object : RepositoryItemAdapter.OnItemClickListener {
+                override fun itemClick(item: RepositoryItem) {
+                    gotoDetailFragment(item)
+                }
+            })
 
-        _binding.searchInputText
-            .setOnEditorActionListener { editText, action, _ ->
-                //TODO: エンターキーが押された時以外は `return@setOnEditorActionListener false`
+        _binding.searchInputText.apply {
+            setOnEditorActionListener { editText, action, _ ->
+                //検索時以外は 何もしない
                 if (action != EditorInfo.IME_ACTION_SEARCH) {
                     return@setOnEditorActionListener false
                 }
                 //キーボードを閉じる
-                val inputManager = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                inputManager.hideSoftInputFromWindow(view.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+                hideKeyboard()
                 //検索する
-                withCatch("検索中にエラーが発生しました") {
+                withCatch(getString(R.string.search_failure)) {
                     //入力された文字列をもとにGithubから検索する
                     val inputText = editText.text.toString()
                     val searchedResult = _viewModel.searchResults(inputText)
                     //検索結果をもとに画面を更新する
-                    _adapter.submitList(searchedResult)
+                    repositoryItemAdapter.submitList(searchedResult)
                 }
                 return@setOnEditorActionListener true
             }
+        }
 
-        _binding.recyclerView.also {
-            it.layoutManager = _layoutManager
-            it.addItemDecoration(_dividerItemDecoration)
-            it.adapter = _adapter
+        _binding.recyclerView.apply {
+            val _layoutManager = LinearLayoutManager(requireContext())
+            layoutManager = _layoutManager
+            addItemDecoration(DividerItemDecoration(requireContext(), _layoutManager.orientation))
+            adapter = repositoryItemAdapter
         }
     }
 
-    fun gotoDetailFragment(item: item) {
+    /**
+     * RepositoryDetailFragmentへ画面遷移する
+     * 引数としてitemを渡す
+     * ここで渡したitemをもとにRepositoryDetailFragmentが表示される
+     */
+    private fun gotoDetailFragment(item: RepositoryItem) {
         val _action = SearchFragmentDirections
             .actionListFragmentToDetailFragment(item = item)
         findNavController().navigate(_action)
     }
+
+    /**
+     * キーボードを隠す
+     */
+    private fun hideKeyboard() {
+        try {
+            val inputManager =
+                activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputManager.hideSoftInputFromWindow(
+                view?.windowToken,
+                InputMethodManager.HIDE_NOT_ALWAYS
+            )
+        } catch (e: ClassCastException) {
+            Log.e("", "error occurred , can not hide keyboard", e)
+        }
+    }
+
 }
 
-
-val diff_util = object : DiffUtil.ItemCallback<item>() {
-    override fun areItemsTheSame(oldItem: item, newItem: item): Boolean {
+val diff_util = object : DiffUtil.ItemCallback<RepositoryItem>() {
+    override fun areItemsTheSame(oldItem: RepositoryItem, newItem: RepositoryItem): Boolean {
         return oldItem.name == newItem.name
     }
 
-    override fun areContentsTheSame(oldItem: item, newItem: item): Boolean {
+    override fun areContentsTheSame(oldItem: RepositoryItem, newItem: RepositoryItem): Boolean {
         return oldItem == newItem
     }
 
 }
 
-class ItemClickAdapter(
+class RepositoryItemAdapter(
     private val itemClickListener: OnItemClickListener,
-) : ListAdapter<item, ItemClickAdapter.ViewHolder>(diff_util) {
+) : ListAdapter<RepositoryItem, RepositoryItemAdapter.ViewHolder>(diff_util) {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
     interface OnItemClickListener {
-        fun itemClick(item: item)
+        fun itemClick(item: RepositoryItem)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
