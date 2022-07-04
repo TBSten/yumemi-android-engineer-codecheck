@@ -1,7 +1,7 @@
 /*
  * Copyright © 2021 YUMEMI Inc. All rights reserved.
  */
-package jp.co.yumemi.android.code_check
+package jp.co.yumemi.android.code_check.view
 
 import android.content.Context
 import android.os.Bundle
@@ -15,9 +15,11 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.*
+import jp.co.yumemi.android.code_check.R
 import jp.co.yumemi.android.code_check.databinding.FragmentSearchBinding
-import jp.co.yumemi.android.code_check.util.withCatch
 import jp.co.yumemi.android.code_check.model.RepositoryItem
+import jp.co.yumemi.android.code_check.util.withCatch
+import jp.co.yumemi.android.code_check.viewmodel.DetailViewModel
 
 /**
  * レポジトリ検索ページ
