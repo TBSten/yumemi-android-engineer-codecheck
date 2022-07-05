@@ -18,16 +18,16 @@ data class RepositoryItem(
 
 fun jsonToRepositoryItem(jsonItem: JSONObject): RepositoryItem {
     return jsonItem.let {
-        val name = it.optString("full_name")
-        val ownerIconUrl = it.optJSONObject("owner").let { obj ->
+        val name = it.getString("full_name")
+        val ownerIconUrl = it.getJSONObject("owner").let { obj ->
             obj ?: throw IllegalArgumentException("invalid jsonItem.owner")
-            obj.optString("avatar_url")
+            obj.getString("avatar_url")
         }
-        val language = it.optString("language")
-        val stargazersCount = it.optLong("stargazers_count")
-        val watchersCount = it.optLong("watchers_count")
-        val forksCount = it.optLong("forks_count")
-        val openIssuesCount = it.optLong("open_issues_count")
+        val language = it.getString("language")
+        val stargazersCount = it.getLong("stargazers_count")
+        val watchersCount = it.getLong("watchers_count")
+        val forksCount = it.getLong("forks_count")
+        val openIssuesCount = it.getLong("open_issues_count")
         RepositoryItem(
             name = name,
             ownerIconUrl = ownerIconUrl,

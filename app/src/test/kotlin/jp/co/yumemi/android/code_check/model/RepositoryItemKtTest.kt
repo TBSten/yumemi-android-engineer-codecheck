@@ -1,7 +1,8 @@
 package jp.co.yumemi.android.code_check.model
 
+import org.json.JSONException
 import org.json.JSONObject
-import org.junit.Assert.assertEquals
+import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -15,34 +16,36 @@ fun validData(num: Int, name: String): JSONObject {
 
 @RunWith(JUnit4::class)
 class RepositoryItemKtTest {
+    object TestRepositoryItem{
+        const val name = "JetBrains/kotlin"
+        const val ownerIconUrl = "https://avatars.githubusercontent.com/u/878437?v=4"
+        const val language = "Kotlin"
+        const val stargazersCount = 41939L
+        const val watchersCount = 41939L
+        const val forksCount = 5197L
+        const val openIssuesCount = 154L
+    }
     @Test
     fun whenInputValidJsonToRepositoryItem() {
-        val name = "JetBrains/kotlin"
-        val ownerIconUrl = "https://avatars.githubusercontent.com/u/878437?v=4"
-        val language = "Kotlin"
-        val stargazersCount = 41939L
-        val watchersCount = 41939L
-        val forksCount = 5197L
-        val openIssuesCount = 154L
 
         val json = JSONObject()
-        json.put("full_name",name)
-        json.put("owner", JSONObject().run { put("avatar_url", ownerIconUrl) })
-        json.put("language", language)
-        json.put("stargazers_count", stargazersCount)
-        json.put("watchers_count", watchersCount)
-        json.put("forks_count", forksCount)
-        json.put("open_issues_count", openIssuesCount)
+        json.put("full_name", TestRepositoryItem.name)
+        json.put("owner", JSONObject().run { put("avatar_url", TestRepositoryItem.ownerIconUrl) })
+        json.put("language", TestRepositoryItem.language)
+        json.put("stargazers_count", TestRepositoryItem.stargazersCount)
+        json.put("watchers_count", TestRepositoryItem.watchersCount)
+        json.put("forks_count", TestRepositoryItem.forksCount)
+        json.put("open_issues_count", TestRepositoryItem.openIssuesCount)
 
         val result = jsonToRepositoryItem(json)
         val expected = RepositoryItem(
-            name = name,
-            ownerIconUrl = ownerIconUrl,
-            language = language,
-            stargazersCount = stargazersCount,
-            watchersCount = watchersCount,
-            forksCount = forksCount,
-            openIssuesCount = openIssuesCount,
+            name = TestRepositoryItem.name,
+            ownerIconUrl = TestRepositoryItem.ownerIconUrl,
+            language = TestRepositoryItem.language,
+            stargazersCount = TestRepositoryItem.stargazersCount,
+            watchersCount = TestRepositoryItem.watchersCount,
+            forksCount = TestRepositoryItem.forksCount,
+            openIssuesCount = TestRepositoryItem.openIssuesCount,
         )
         assertEquals(expected.name, result.name)
         assertEquals(expected.ownerIconUrl, result.ownerIconUrl)
@@ -51,7 +54,25 @@ class RepositoryItemKtTest {
         assertEquals(expected.watchersCount, result.watchersCount)
         assertEquals(expected.forksCount, result.forksCount)
         assertEquals(expected.openIssuesCount, result.openIssuesCount)
-
     }
+
+    @Test(expected = JSONException::class)
+    fun whenThereIsNoName() {
+        val json = JSONObject()
+        json.put("owner", JSONObject().run { put("avatar_url", TestRepositoryItem.ownerIconUrl) })
+        json.put("language", TestRepositoryItem.language)
+        json.put("stargazers_count", TestRepositoryItem.stargazersCount)
+        json.put("watchers_count", TestRepositoryItem.watchersCount)
+        json.put("forks_count", TestRepositoryItem.forksCount)
+        json.put("open_issues_count", TestRepositoryItem.openIssuesCount)
+
+        jsonToRepositoryItem(json)  //required throw
+    }
+    @Test(expected = JSONException::class)
+    fun whenThereIsNoProps() {
+        val json = JSONObject()
+        jsonToRepositoryItem(json)  //required throw
+    }
+
 }
 
