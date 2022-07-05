@@ -8,8 +8,4 @@ import java.util.*
 
 class MainActivity : AppCompatActivity(R.layout.activity_top) {
 
-    companion object {
-        lateinit var lastSearchDate: Date
-    }
-
 }

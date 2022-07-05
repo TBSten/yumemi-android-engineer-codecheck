@@ -5,7 +5,6 @@ import io.ktor.client.call.*
 import io.ktor.client.engine.android.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import jp.co.yumemi.android.code_check.MainActivity.Companion.lastSearchDate
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
@@ -15,6 +14,7 @@ import java.util.*
 class RepositorySearcher {
     companion object {
         private val client = HttpClient(Android)        //クライアントは使い回す
+        lateinit var lastSearchDate: Date
     }
 
     private var keywords: String = ""
