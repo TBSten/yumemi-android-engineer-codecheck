@@ -26,7 +26,7 @@ fun jsonToRepositoryItem(jsonItem: JSONObject): RepositoryItem {
         val language = it.optString("language")
         val stargazersCount = it.optLong("stargazers_count")
         val watchersCount = it.optLong("watchers_count")
-        val forksCount = it.optLong("forks_conut")
+        val forksCount = it.optLong("forks_count")
         val openIssuesCount = it.optLong("open_issues_count")
         RepositoryItem(
             name = name,
