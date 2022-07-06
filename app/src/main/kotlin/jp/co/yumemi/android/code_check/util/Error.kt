@@ -1,8 +1,14 @@
 package jp.co.yumemi.android.code_check.util
 
-import android.app.AlertDialog
 import android.util.Log
-import androidx.fragment.app.Fragment
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.res.stringResource
 import jp.co.yumemi.android.code_check.R
 
 /**
@@ -19,25 +25,4 @@ class ResourceException(
     msg: String = "resource exception",
 ) : Exception(msg)
 
-
-/**
- * エラーをキャッチして特定の処理を実行する
- */
-
-fun <T : Fragment> T.withCatch(
-    errMsg: String = getString(R.string.error_alert_title),
-    func: () -> Unit,
-){
-    return try {
-        func()
-    } catch (e: Exception) {  //TODO: InputErrorやResourceErrorなど既知のエラーについてはそれに対応した処理をする
-        Log.e("error", errMsg, e)
-        AlertDialog.Builder(this.requireContext())
-            .setTitle(errMsg)
-            .setMessage(getString(R.string.error_alert_message))
-            .show()
-        return
-    }
-
-}
 
