@@ -16,7 +16,7 @@ fun validData(num: Int, name: String): JSONObject {
 
 @RunWith(JUnit4::class)
 class RepositoryItemKtTest {
-    object TestRepositoryItem{
+    object TestRepositoryItem {
         const val name = "JetBrains/kotlin"
         const val ownerIconUrl = "https://avatars.githubusercontent.com/u/878437?v=4"
         const val language = "Kotlin"
@@ -44,8 +44,8 @@ class RepositoryItemKtTest {
             language = TestRepositoryItem.language,
             stargazersCount = TestRepositoryItem.stargazersCount,
             watchersCount = TestRepositoryItem.watchersCount,
-            forksCount = TestRepositoryItem.forksCount,
             openIssuesCount = TestRepositoryItem.openIssuesCount,
+            forksCount = TestRepositoryItem.forksCount,
         )
         assertEquals(expected.name, result.name)
         assertEquals(expected.ownerIconUrl, result.ownerIconUrl)

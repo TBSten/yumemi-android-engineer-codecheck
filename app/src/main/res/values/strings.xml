@@ -1,11 +1,26 @@
 <!-- 定数はjp.co.yumemi.android.code_check.util.Constantsに移動しました -->
 
 <resources>
+    <!-- ビューに表示するStrings -->
     <string name="app_name">Android Engineer CodeCheck</string>
-    <string name="searchInputText_hint">GitHub のリポジトリを検索できるよー</string>
-    <string name="written_language">Written in %s</string>
-    <string name="error_alert_title">エラーが発生しました</string>
-    <string name="error_alert_message">しばらく経ってからやり直してください。それでも引き続きエラーが発生する場合は開発者に相談してください。</string>
-    <string name="img_failure">画像が読み込めませんでした</string>
-    <string name="search_failure">検索中にエラーが発生しました</string>
+    <string name="search_button_text">検索</string>
+    <string name="request_keyword">キーワードを入力</string>
+    <string name="repo_detail_lang">Written in %s</string>
+    <string name="repo_detail_stars">%d starts</string>
+    <string name="repo_detail_watchers">%d watchers</string>
+    <string name="repo_detail_forks">%d forks</string>
+    <string name="repo_detail_open_issues">%d open issues</string>
+    <string name="menu">メニュー</string>
+    <string name="menu_goto_keep">Keep一覧を見る</string>
+    <string name="keep_title">Keep一覧</string>
+    <string name="none_keep">Keepが1つもありません</string>
+    <string name="back">もどる</string>
+
+    <!-- イベント発生時のStrings -->
+    <string name="searching_msg">検索中...</string>
+    <string name="success_msg">%s 件見つかりました</string>
+    <string name="error_msg">エラーが発生しました</string>
+    <string name="none_keyword">キーワードを入力してください</string>
+    <string name="nothing_search_result">レポジトリが見つかりませんでした</string>
+
 </resources>

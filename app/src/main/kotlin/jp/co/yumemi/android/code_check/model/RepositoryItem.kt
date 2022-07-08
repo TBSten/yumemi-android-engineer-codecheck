@@ -12,8 +12,8 @@ data class RepositoryItem(
     val language: String,
     val stargazersCount: Long,
     val watchersCount: Long,
-    val forksCount: Long,
     val openIssuesCount: Long,
+    val forksCount :Long,
 ) : Parcelable
 
 fun jsonToRepositoryItem(jsonItem: JSONObject): RepositoryItem {
@@ -34,8 +34,8 @@ fun jsonToRepositoryItem(jsonItem: JSONObject): RepositoryItem {
             language = language,
             stargazersCount = stargazersCount,
             watchersCount = watchersCount,
+            openIssuesCount = openIssuesCount,
             forksCount = forksCount,
-            openIssuesCount = openIssuesCount
         )
     }
 }

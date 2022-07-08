@@ -9,10 +9,10 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import coil.load
+import jp.co.yumemi.android.code_check.MainActivity.Companion.lastSearchDate
 import jp.co.yumemi.android.code_check.R
 import jp.co.yumemi.android.code_check.databinding.FragmentRepositoryDetailBinding
 import jp.co.yumemi.android.code_check.model.RepositoryItem
-import jp.co.yumemi.android.code_check.model.RepositorySearcher.Companion.lastSearchDate
 import jp.co.yumemi.android.code_check.util.withCatch
 
 class RepositoryDetailFragment : Fragment(R.layout.fragment_repository_detail) {

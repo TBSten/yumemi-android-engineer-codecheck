@@ -14,11 +14,4 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="TextInputLayoutNoBorder" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-        <item name="errorIconDrawable">@null</item>
-        <item name="errorIconTint">@null</item>
-        <item name="hintEnabled">false</item>
-        <item name="boxBackgroundMode">none</item>
-    </style>
-
 </resources>
