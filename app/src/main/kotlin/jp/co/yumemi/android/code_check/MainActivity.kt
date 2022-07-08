@@ -16,7 +16,6 @@ import java.util.*
 class MainActivity : ComponentActivity() {
 
     companion object {
-        lateinit var lastSearchDate: Date
         lateinit var database :AppDatabase
     }
 
